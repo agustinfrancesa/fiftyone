@@ -95,7 +95,6 @@ RUN apt -y update \
 
 RUN pip --no-cache-dir install --upgrade pip setuptools wheel ipython torch torchvision  'ipywidgets>=8,<9' umap-learn
 
-
 #
 # Install FiftyOne from source
 #
