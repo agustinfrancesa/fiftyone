@@ -35,6 +35,11 @@ FROM $BASE_IMAGE
 # The Python version to install
 ARG PYTHON_VERSION=3.8
 
+
+ENV http_proxy=http://proxy-dmz.intel.com:912/
+ENV https_proxy=http://proxy-dmz.intel.com:912/
+ENV no_proxy=host.docker.internal,0.0.0.0
+
 #
 # Install system packages
 #
@@ -88,17 +93,18 @@ RUN apt -y update \
 #   pydicom: DICOM images
 #
 
-RUN pip --no-cache-dir install --upgrade pip setuptools wheel ipython
+RUN pip --no-cache-dir install --upgrade pip setuptools wheel ipython torch torchvision  'ipywidgets>=8,<9' umap-learn
+
 
 #
 # Install FiftyOne from source
 #
 
-COPY dist dist
-RUN pip --no-cache-dir install dist/*.whl && rm -rf dist
+#COPY dist dist
+#RUN pip --no-cache-dir install dist/*.whl && rm -rf dist
 
 # Use this instead if you want the latest FiftyOne release
-# RUN pip --no-cache-dir install fiftyone
+ RUN pip --no-cache-dir install fiftyone jupyterlab
 
 #
 # Configure shared storage
@@ -111,13 +117,22 @@ ARG ROOT_DIR=/fiftyone
 ENV FIFTYONE_DATABASE_DIR=${ROOT_DIR}/db \
     FIFTYONE_DEFAULT_DATASET_DIR=${ROOT_DIR}/default \
     FIFTYONE_DATASET_ZOO_DIR=${ROOT_DIR}/zoo/datasets \
-    FIFTYONE_MODEL_ZOO_DIR=${ROOT_DIR}/zoo/models
+    FIFTYONE_MODEL_ZOO_DIR=${ROOT_DIR}/zoo/models \
+    FIFTYONE_DEFAULT_APP_ADDRESS='0.0.0.0'
+
 
 #
 # Default behavior
 #
 
-CMD ipython
+#CMD ipython
+
+#CMD fiftyone app launch --remote
+
+COPY ./fiftyone/startup.sh startup.sh
+
+CMD sh startup.sh
+
 
 # Use this if you want the default behavior to instead be to launch the App
 # CMD python /usr/local/lib/python/dist-packages/fiftyone/server/main.py --port 5151
