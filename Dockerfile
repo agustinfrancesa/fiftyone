@@ -29,16 +29,11 @@
 #
 
 # The base image to build from; must be Debian-based (eg Ubuntu)
-ARG BASE_IMAGE=ubuntu:20.04
+ARG BASE_IMAGE=nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu20.04
 FROM $BASE_IMAGE
 
 # The Python version to install
 ARG PYTHON_VERSION=3.8
-
-
-ENV http_proxy=http://proxy-dmz.intel.com:912/
-ENV https_proxy=http://proxy-dmz.intel.com:912/
-ENV no_proxy=host.docker.internal,0.0.0.0
 
 #
 # Install system packages
@@ -93,7 +88,7 @@ RUN apt -y update \
 #   pydicom: DICOM images
 #
 
-RUN pip --no-cache-dir install --upgrade pip setuptools wheel ipython torch torchvision  'ipywidgets>=8,<9' umap-learn
+RUN pip --no-cache-dir install --upgrade pip setuptools wheel ipython torch torchvision  'ipywidgets>=8,<9' umap-learn qdrant_client
 
 #
 # Install FiftyOne from source
@@ -126,12 +121,10 @@ ENV FIFTYONE_DATABASE_DIR=${ROOT_DIR}/db \
 
 #CMD ipython
 
-#CMD fiftyone app launch --remote
+COPY startup.sh /opt
+WORKDIR $ROOT_DIR
 
-COPY ./fiftyone/startup.sh startup.sh
-
-CMD sh startup.sh
-
+CMD ["bash", "/opt/startup.sh"]
 
 # Use this if you want the default behavior to instead be to launch the App
 # CMD python /usr/local/lib/python/dist-packages/fiftyone/server/main.py --port 5151
