@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Install FiftyOne plugins
+fiftyone plugins download https://github.com/jacobmarks/image-quality-issues/
+fiftyone plugins download https://github.com/jacobmarks/image-deduplication-plugin
+fiftyone plugins download https://github.com/jacobmarks/zero-shot-prediction-plugin
+
 # Start Jupyter Notebook in the background
 jupyter lab --ip 0.0.0.0 --no-browser --allow-root &
 

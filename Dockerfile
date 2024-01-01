@@ -29,7 +29,7 @@
 #
 
 # The base image to build from; must be Debian-based (eg Ubuntu)
-ARG BASE_IMAGE=nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu20.04
+ARG BASE_IMAGE=nvidia/cuda:11.4.3-cudnn8-runtime-ubuntu20.04
 FROM $BASE_IMAGE
 
 # The Python version to install
@@ -63,6 +63,7 @@ RUN apt -y update \
         unzip \
         curl \
         wget \
+        git \
         python${PYTHON_VERSION} \
         python${PYTHON_VERSION}-dev \
         python${PYTHON_VERSION}-distutils \
@@ -88,7 +89,17 @@ RUN apt -y update \
 #   pydicom: DICOM images
 #
 
-RUN pip --no-cache-dir install --upgrade pip setuptools wheel ipython torch torchvision  'ipywidgets>=8,<9' umap-learn qdrant_client
+RUN pip --no-cache-dir install --upgrade pip \
+    setuptools \
+    wheel \
+    ipython \
+    torch \
+    torchvision \
+    'ipywidgets>=8,<9' \
+    umap-learn \
+    transformers \
+    open_clip_torch \
+    git+https://github.com/facebookresearch/segment-anything.git
 
 #
 # Install FiftyOne from source
