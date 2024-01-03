@@ -64,6 +64,7 @@ RUN apt -y update \
         curl \
         wget \
         git \
+        netcat \
         python${PYTHON_VERSION} \
         python${PYTHON_VERSION}-dev \
         python${PYTHON_VERSION}-distutils \
